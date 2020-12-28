@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -67,5 +68,31 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.update, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return  when (item.itemId) {
+            R.id.action_update -> {
+                updatePosts()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+    }
+
+    private fun updatePosts() {
+        binding.postProgressBar.visibility = View.VISIBLE
+        val response = postViewModel.updatePosts()
+        response.observe(this, Observer {
+            if (it != null) {
+                adapter.setList(it)
+                adapter.notifyDataSetChanged()
+                binding.postProgressBar.visibility = View.GONE
+            } else {
+                binding.postProgressBar.visibility = View.GONE
+            }
+        })
     }
 }
